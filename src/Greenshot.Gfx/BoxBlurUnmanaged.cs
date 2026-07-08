@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -87,11 +87,11 @@ namespace Greenshot.Gfx
         private static void BoxBlurHorizontal(UnmanagedBitmap<Bgr32> unmanagedBitmap, int range)
         {
             var halfRange = range / 2;
+            Span<Bgr32> averages = stackalloc Bgr32[range];
 
             for(var y = 0; y <unmanagedBitmap.Height; y++)
             {
                 var rgb32 = unmanagedBitmap[y];
-                Span<Bgr32> averages = stackalloc Bgr32[range];
                 var r = 0;
                 var g = 0;
                 var b = 0;
@@ -153,10 +153,10 @@ namespace Greenshot.Gfx
         private static void BoxBlurVertical(UnmanagedBitmap<Bgr32> unmanagedBitmap, int range)
         {
             var halfRange = range / 2;
+            Span<Bgr32> averages = stackalloc Bgr32[range];
             for(var x = 0; x <unmanagedBitmap.Width; x++)
             {
                 var rgb32 = unmanagedBitmap.Span;
-                Span<Bgr32> averages = stackalloc Bgr32[range];
                 var hits = 0;
                 var r = 0;
                 var g = 0;
@@ -218,11 +218,11 @@ namespace Greenshot.Gfx
         private static void BoxBlurHorizontal(UnmanagedBitmap<Bgra32> unmanagedBitmap, int range)
         {
             var halfRange = range / 2;
+            Span<Bgra32> averages = stackalloc Bgra32[range];
 
             for(var y = 0; y <unmanagedBitmap.Height; y++)
             {
                 var argb32 = unmanagedBitmap[y];
-                Span<Bgra32> averages = stackalloc Bgra32[range];
                 var a = 0;
                 var r = 0;
                 var g = 0;
@@ -288,10 +288,10 @@ namespace Greenshot.Gfx
         private static void BoxBlurVertical(UnmanagedBitmap<Bgra32> unmanagedBitmap, int range)
         {
             var halfRange = range / 2;
+            Span<Bgra32> averages = stackalloc Bgra32[range];
             for(var x = 0; x <unmanagedBitmap.Width; x++)
             {
                 var argb32 = unmanagedBitmap.Span;
-                Span<Bgra32> averages = stackalloc Bgra32[range];
                 var hits = 0;
                 var a = 0;
                 var r = 0;

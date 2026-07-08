@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -39,7 +39,6 @@ namespace Greenshot.Addons.Core
 	{
 		private const string PathKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\";
 		private static readonly LogSource Log = new LogSource();
-	    private static bool _isHooked = false;
 		private static readonly Dictionary<string, IBitmapWithNativeSupport> ExeIconCache = new Dictionary<string, IBitmapWithNativeSupport>();
         private static ICoreConfiguration coreConfiguration;
 

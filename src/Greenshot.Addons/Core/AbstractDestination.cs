@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -218,7 +218,7 @@ namespace Greenshot.Addons.Core
                             {
                                 Tag = subDestination,
                             };
-                            bitmapScaleHandler.AddTarget(destinationMenuItem, subDestination, bitmap => bitmap.NativeBitmap);
+                            bitmapScaleHandler.AddTarget(destinationMenuItem, subDestination, bitmap => bitmap?.NativeBitmap);
 
                             destinationMenuItem.Click += destinationClickHandler;
                             AddTagEvents(destinationMenuItem, menu, subDestination.Description);

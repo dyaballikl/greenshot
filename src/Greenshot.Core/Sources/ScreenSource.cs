@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -161,10 +161,10 @@ namespace Greenshot.Core.Sources
                 // Check if we need to have a transparent background, needed for offscreen content
                 if (offscreenContent)
                 {
-                    var modifiedImage = new WriteableBitmap(capturedBitmapSource.PixelWidth, capturedBitmapSource.PixelHeight, capturedBitmapSource.DpiX, capturedBitmapSource.DpiY, PixelFormats.Bgr32, capturedBitmapSource.Palette);
+                    var modifiedImage = new WriteableBitmap(capturedBitmapSource.PixelWidth, capturedBitmapSource.PixelHeight, capturedBitmapSource.DpiX, capturedBitmapSource.DpiY, capturedBitmapSource.Format, capturedBitmapSource.Palette);
                     foreach (var displayInfo in DisplayInfo.AllDisplayInfos)
                     {
-                        modifiedImage.CopyPixels(capturedBitmapSource, displayInfo.Bounds);
+                        modifiedImage.CopyPixels(capturedBitmapSource, displayInfo.Bounds, captureBounds);
                     }
 
                     capturedBitmapSource = modifiedImage;

@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 //
 // For more information see: http://getgreenshot.org/
@@ -78,7 +78,7 @@ namespace Greenshot.Addons.Controls
 		// Holds the list of hotkeys
 		private static readonly IDictionary<int, HotKeyHandler> KeyHandlers = new Dictionary<int, HotKeyHandler>();
 		private static int _hotKeyCounter = 1;
-		private static IntPtr _hotkeyHwnd;
+		private static IntPtr _hotkeyHwnd = IntPtr.Zero;
 
 		private readonly ContextMenuStrip _dummy = new ContextMenuStrip();
 		private readonly IList<int> _needNonAltGrModifier = new List<int>();

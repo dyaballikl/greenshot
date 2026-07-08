@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -41,6 +41,7 @@ using Greenshot.Addons.Extensions;
 using Greenshot.Addons.Interfaces;
 using Greenshot.Components;
 using Greenshot.Core.Enums;
+using ScreenCaptureMode = Greenshot.Core.Enums.ScreenCaptureMode;
 using Greenshot.Gfx;
 
 namespace Greenshot.Helpers

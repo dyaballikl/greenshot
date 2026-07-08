@@ -81,6 +81,9 @@ namespace Greenshot.Addon.LegacyEditor.Forms
         private readonly Func<TornEdgeEffect, Owned<TornEdgeSettingsForm>> _tornEdgeSettingsFormFactory;
         private readonly Func<DropShadowEffect, Owned<DropShadowSettingsForm>> _dropShadowSettingsFormFactory;
         private CompositeDisposable _disposables;
+        private readonly List<EditorTab> _tabs = new List<EditorTab>();
+        private int _currentTabIndex = -1;
+        private TabControl editorTabControl;
 
         public ImageEditorForm(
             IEditorConfiguration editorConfiguration,
@@ -139,6 +142,27 @@ namespace Greenshot.Addon.LegacyEditor.Forms
             {
                 UpdateClipboardSurfaceDependencies();
             });
+
+            // Initialize TabControl dynamically
+            editorTabControl = new TabControl();
+            editorTabControl.Dock = DockStyle.Fill;
+            editorTabControl.Height = 58;
+            editorTabControl.DrawMode = TabDrawMode.OwnerDrawFixed;
+            editorTabControl.ItemSize = new Size(145, 54);
+            editorTabControl.SizeMode = TabSizeMode.Fixed;
+            editorTabControl.Visible = false;
+            editorTabControl.DrawItem += EditorTabControl_DrawItem;
+            editorTabControl.SelectedIndexChanged += EditorTabControl_SelectedIndexChanged;
+            editorTabControl.MouseClick += EditorTabControl_MouseClick;
+
+            // Adjust tableLayoutPanel1 layout programmatically
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Clear();
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+            tableLayoutPanel1.Controls.Add(editorTabControl, 0, 0);
+            tableLayoutPanel1.SetCellPosition(panel1, new TableLayoutPanelCellPosition(0, 1));
         }
 
         private void SetupBitmapScaleHandler()
@@ -686,6 +710,7 @@ namespace Greenshot.Addon.LegacyEditor.Forms
         private void RefreshFieldControls()
         {
             propertiesToolStrip.SuspendLayout();
+            bool hasVisibleItems = false;
             if (_surface.HasSelectedElements || _surface.DrawingMode != DrawingModes.None)
             {
                 var props = _surface.FieldAggregator;
@@ -711,11 +736,21 @@ namespace Greenshot.Addon.LegacyEditor.Forms
 
                 obfuscateModeButton.Visible = props.HasFieldValue(FieldTypes.PREPARED_FILTER_OBFUSCATE);
                 highlightModeButton.Visible = props.HasFieldValue(FieldTypes.PREPARED_FILTER_HIGHLIGHT);
+
+                foreach (ToolStripItem item in propertiesToolStrip.Items)
+                {
+                    if (item.Visible)
+                    {
+                        hasVisibleItems = true;
+                        break;
+                    }
+                }
             }
             else
             {
                 HideToolstripItems();
             }
+            propertiesToolStrip.Visible = hasVisibleItems;
             propertiesToolStrip.ResumeLayout(true);
         }
 
@@ -725,6 +760,7 @@ namespace Greenshot.Addon.LegacyEditor.Forms
             {
                 toolStripItem.Visible = false;
             }
+            propertiesToolStrip.Visible = false;
         }
 
         /// <summary>
@@ -1514,32 +1550,36 @@ namespace Greenshot.Addon.LegacyEditor.Forms
         private void ImageEditorFormFormClosing(object sender, FormClosingEventArgs e)
         {
             var interopWindow = InteropWindowFactory.CreateFor(Handle);
-            if (_surface.Modified && !_editorConfiguration.SuppressSaveDialogAtClose)
+            if (!_editorConfiguration.SuppressSaveDialogAtClose)
             {
-                // Make sure the editor is visible
-                // TODO: Await?
-                interopWindow.ToForegroundAsync();
+                var modifiedTabs = _tabs.Where(t => t.Surface.Modified).ToList();
+                if (modifiedTabs.Any())
+                {
+                    // Make sure the editor is visible
+                    interopWindow.ToForegroundAsync();
 
-                var buttons = MessageBoxButtons.YesNoCancel;
-                // Dissallow "CANCEL" if the application needs to shutdown
-                if (e.CloseReason == CloseReason.ApplicationExitCall || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
-                {
-                    buttons = MessageBoxButtons.YesNo;
-                }
-                var result = MessageBox.Show(_editorLanguage.EditorCloseOnSave, _editorLanguage.EditorCloseOnSaveTitle, buttons, MessageBoxIcon.Question);
-                if (result.Equals(DialogResult.Cancel))
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                if (result.Equals(DialogResult.Yes))
-                {
-                    BtnSaveClick(sender, e);
-                    // Check if the save was made, if not it was cancelled so we cancel the closing
-                    if (_surface.Modified)
+                    var buttons = MessageBoxButtons.YesNoCancel;
+                    // Dissallow "CANCEL" if the application needs to shutdown
+                    if (e.CloseReason == CloseReason.ApplicationExitCall || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
+                    {
+                        buttons = MessageBoxButtons.YesNo;
+                    }
+                    var result = MessageBox.Show(_editorLanguage.EditorCloseOnSave, _editorLanguage.EditorCloseOnSaveTitle, buttons, MessageBoxIcon.Question);
+                    if (result.Equals(DialogResult.Cancel))
                     {
                         e.Cancel = true;
                         return;
+                    }
+                    if (result.Equals(DialogResult.Yes))
+                    {
+                        foreach (var tab in modifiedTabs)
+                        {
+                            if (!TrySaveTab(tab))
+                            {
+                                e.Cancel = true;
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -1548,7 +1588,14 @@ namespace Greenshot.Addon.LegacyEditor.Forms
             // remove from the editor list
             _editorFactory.Remove(this);
 
-            _surface.Dispose();
+            // Dispose all tab surfaces
+            foreach (var tab in _tabs)
+            {
+                tab.Surface.Dispose();
+            }
+            _tabs.Clear();
+
+            _clipboardSubscription?.Dispose();
 
             GC.Collect();
             if (_coreConfiguration.MinimizeWorkingSetSize)
@@ -1774,6 +1821,250 @@ namespace Greenshot.Addon.LegacyEditor.Forms
         private void OpenDirectoryMenuItemClick(object sender, EventArgs e)
         {
             ExplorerHelper.OpenInExplorer(_surface.LastSaveFullPath);
+        }
+
+        public class EditorTab
+        {
+            public Surface Surface { get; set; }
+            public string Title { get; set; }
+        }
+
+        public void AddTab(ISurface surface, bool outputMade)
+        {
+            var newSurface = surface as Surface;
+            if (newSurface == null) return;
+
+            var newTab = new EditorTab
+            {
+                Surface = newSurface,
+                Title = surface.CaptureDetails?.Title ?? $"Capture {_tabs.Count + 1}"
+            };
+
+            _tabs.Add(newTab);
+
+            // Initial "saved" flag for asking if the image needs to be saved
+            newSurface.Modified = !outputMade;
+
+            // Subscribe events ONCE per surface!
+            var backgroundForTransparency = GreenshotResources.Instance.GetBitmap("Checkerboard.Image");
+            newSurface.TransparencyBackgroundBrush = new TextureBrush(backgroundForTransparency.NativeBitmap, WrapMode.Tile);
+            newSurface.MovingElementChanged += (sender, args) => RefreshEditorControls();
+            newSurface.DrawingModeChanged += SurfaceDrawingModeChanged;
+            newSurface.SurfaceSizeChanged += SurfaceSizeChanged;
+            newSurface.SurfaceMessage += SurfaceMessageReceived;
+            newSurface.FieldAggregator.FieldChanged += FieldAggregatorFieldChanged;
+
+            // Create a new TabPage in editorTabControl
+            TabPage tabPage = new TabPage();
+            tabPage.Text = newTab.Title;
+            editorTabControl.TabPages.Add(tabPage);
+
+            // If this is the first tab, initialize the TabControl visible
+            if (_tabs.Count == 1)
+            {
+                editorTabControl.Visible = true;
+            }
+
+            // Set the selected index to the new tab
+            editorTabControl.SelectedIndex = _tabs.Count - 1;
+            SetActiveTab(_tabs.Count - 1);
+        }
+
+        private void SetActiveTab(int index)
+        {
+            if (index < 0 || index >= _tabs.Count) return;
+
+            // Save current surface state if there was one
+            if (_currentTabIndex >= 0 && _currentTabIndex < _tabs.Count)
+            {
+                _tabs[_currentTabIndex].Surface = _surface;
+            }
+
+            _currentTabIndex = index;
+            var nextTab = _tabs[index];
+
+            // Swap surface in panel1 without disposing!
+            _disposables?.Dispose();
+            if (_surface != null)
+            {
+                panel1.Controls.Remove(_surface);
+            }
+
+            _surface = nextTab.Surface;
+            if (_surface != null)
+            {
+                panel1.Controls.Add(_surface);
+
+                SurfaceSizeChanged(Surface, null);
+                BindFieldControls();
+                RefreshEditorControls();
+
+                // Fix title
+                if (_surface?.CaptureDetails?.Title != null)
+                {
+                    Text = _surface.CaptureDetails.Title + " - " + _editorLanguage.EditorTitle;
+                }
+            }
+
+            UpdateUi();
+            Activate();
+        }
+
+        private void EditorTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetActiveTab(editorTabControl.SelectedIndex);
+        }
+
+        private void EditorTabControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            for (int i = 0; i < editorTabControl.TabCount; i++)
+            {
+                Rectangle rect = editorTabControl.GetTabRect(i);
+                Rectangle closeRect = new Rectangle(rect.Right - 18, rect.Y + (rect.Height - 12) / 2, 12, 12);
+                if (closeRect.Contains(e.Location))
+                {
+                    CloseTab(i);
+                    break;
+                }
+            }
+        }
+
+        private void CloseTab(int index)
+        {
+            if (index < 0 || index >= _tabs.Count) return;
+
+            var tab = _tabs[index];
+            if (tab.Surface.Modified && !_editorConfiguration.SuppressSaveDialogAtClose)
+            {
+                // Ask to save
+                DialogResult result = MessageBox.Show(
+                    this,
+                    _editorLanguage.EditorCloseOnSave ?? "Save changes to this screenshot before closing?",
+                    _editorLanguage.EditorCloseOnSaveTitle ?? "Greenshot",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Trigger save
+                    if (!TrySaveTab(tab))
+                    {
+                        return; // User cancelled save or it failed
+                    }
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return; // Cancel close
+                }
+            }
+
+            // Proceed with removing tab
+            _tabs.RemoveAt(index);
+            
+            // Temporarily unregister SelectedIndexChanged to avoid swapping surfaces prematurely
+            editorTabControl.SelectedIndexChanged -= EditorTabControl_SelectedIndexChanged;
+            editorTabControl.TabPages.RemoveAt(index);
+            editorTabControl.SelectedIndexChanged += EditorTabControl_SelectedIndexChanged;
+
+            // Dispose the surface of the closed tab
+            tab.Surface.Dispose();
+
+            if (_tabs.Count == 0)
+            {
+                // No more tabs left, close the form
+                this.Close();
+            }
+            else
+            {
+                // Select next/previous tab
+                int newIndex = Math.Min(index, _tabs.Count - 1);
+                editorTabControl.SelectedIndex = newIndex;
+                SetActiveTab(newIndex);
+            }
+        }
+
+        private bool TrySaveTab(EditorTab tab)
+        {
+            int tabIndex = _tabs.IndexOf(tab);
+            if (tabIndex >= 0)
+            {
+                editorTabControl.SelectedIndex = tabIndex;
+                SetActiveTab(tabIndex);
+                BtnSaveClick(this, EventArgs.Empty);
+                return !tab.Surface.Modified;
+            }
+            return false;
+        }
+
+        private void EditorTabControl_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0 || e.Index >= _tabs.Count) return;
+
+            var tab = _tabs[e.Index];
+            Rectangle rect = editorTabControl.GetTabRect(e.Index);
+
+            // Draw background
+            bool isSelected = e.Index == editorTabControl.SelectedIndex;
+            using (Brush backBrush = new SolidBrush(isSelected ? Color.White : SystemColors.Control))
+            {
+                e.Graphics.FillRectangle(backBrush, rect);
+            }
+
+            // Draw border
+            using (Pen borderPen = new Pen(isSelected ? Color.LightGray : SystemColors.ControlDark))
+            {
+                e.Graphics.DrawRectangle(borderPen, rect);
+            }
+
+            // Draw thumbnail image preview (larger, taking up more of the tab)
+            if (tab.Surface?.Screenshot?.NativeBitmap != null)
+            {
+                Image img = tab.Surface.Screenshot.NativeBitmap;
+                int borderSize = 48; // Symmetrical border box of 48x48 (3px margins on 54px tab height)
+                int previewSize = 46; // Image sized to fit inside the border bounds
+                float ratio = Math.Min((float)previewSize / img.Width, (float)previewSize / img.Height);
+                int w = (int)(img.Width * ratio);
+                int h = (int)(img.Height * ratio);
+                
+                // Symmetrical placement:
+                // Border top-left at (rect.X + 3, rect.Y + 3)
+                using (Pen thumbPen = new Pen(Color.LightGray))
+                {
+                    e.Graphics.DrawRectangle(thumbPen, rect.X + 3, rect.Y + 3, borderSize, borderSize);
+                }
+                
+                // Center the image inside the border region starting at (rect.X + 4, rect.Y + 4)
+                int x = rect.X + 4 + (previewSize - w) / 2;
+                int y = rect.Y + 4 + (previewSize - h) / 2;
+                e.Graphics.DrawImage(img, new Rectangle(x, y, w, h));
+            }
+
+            // Draw Title Text (yyyy-MM-dd and HH;mm;ss on a second line)
+            DateTime time = tab.Surface?.CaptureDetails?.DateTime ?? DateTime.Now;
+            string dateText = time.ToString("yyyy-MM-dd");
+            string timeText = time.ToString("HH;mm;ss");
+            string fullText = dateText + "\n" + timeText;
+            Rectangle textRect = new Rectangle(rect.X + 55, rect.Y + 4, rect.Width - 75, rect.Height - 8);
+            using (Brush brush = new SolidBrush(isSelected ? Color.Black : Color.DimGray))
+            {
+                using (Font font = new Font(e.Font, isSelected ? FontStyle.Bold : FontStyle.Regular))
+                {
+                    e.Graphics.DrawString(fullText, font, brush, textRect, new StringFormat 
+                    { 
+                        Trimming = StringTrimming.EllipsisCharacter, 
+                        LineAlignment = StringAlignment.Center,
+                        Alignment = StringAlignment.Near
+                    });
+                }
+            }
+
+            // Draw Close Button (x) (Vertically centered)
+            Rectangle closeRect = new Rectangle(rect.Right - 18, rect.Y + (rect.Height - 12) / 2, 12, 12);
+            using (Pen pen = new Pen(isSelected ? Color.DarkGray : Color.Gray, 1.5f))
+            {
+                e.Graphics.DrawLine(pen, closeRect.X, closeRect.Y, closeRect.Right, closeRect.Bottom);
+                e.Graphics.DrawLine(pen, closeRect.Right, closeRect.Y, closeRect.X, closeRect.Bottom);
+            }
         }
     }
 }

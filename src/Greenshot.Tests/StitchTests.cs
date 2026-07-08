@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -45,10 +45,21 @@ namespace Greenshot.Tests
                 .AddBitmap(BitmapHelper.LoadBitmap(@"TestFiles\scroll124.png"));
 
             using var completedBitmap = bitmapStitcher.Result();
-            completedBitmap.NativeBitmap.Save("scroll.png", ImageFormat.Png);
-            FileAssert.AreEqual(@"TestFiles\scroll-result.png", "scroll.png");
+            using var expectedBitmap = BitmapHelper.LoadBitmap(@"TestFiles\scroll-result.png");
 
-            File.Delete("scroll.png");
+            var expectedBmp = expectedBitmap.NativeBitmap;
+            var actualBmp = completedBitmap.NativeBitmap;
+
+            Assert.Equal(expectedBmp.Width, actualBmp.Width);
+            Assert.Equal(expectedBmp.Height, actualBmp.Height);
+
+            for (int y = 0; y < expectedBmp.Height; y++)
+            {
+                for (int x = 0; x < expectedBmp.Width; x++)
+                {
+                    Assert.Equal(expectedBmp.GetPixel(x, y), actualBmp.GetPixel(x, y));
+                }
+            }
         }
     }
 }

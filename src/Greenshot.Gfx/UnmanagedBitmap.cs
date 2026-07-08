@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 //
 // For more information see: http://getgreenshot.org/
@@ -69,7 +69,7 @@ namespace Greenshot.Gfx
             var bytesPerPixel = Marshal.SizeOf<TPixelLayout>();
             Width = width;
             Height = height;
-            _stride = bytesPerPixel * width;
+            _stride = ((bytesPerPixel * width + 3) / 4) * 4;
             var bytesAllocated = height * _stride;
             _bits = _hGlobal = Marshal.AllocHGlobal(bytesAllocated);
             GC.AddMemoryPressure(bytesAllocated);
@@ -90,7 +90,7 @@ namespace Greenshot.Gfx
             var bytesPerPixel = Marshal.SizeOf<TPixelLayout>();
             Width = width;
             Height = height;
-            _stride = bytesPerPixel * width;
+            _stride = ((bytesPerPixel * width + 3) / 4) * 4;
             _bits = bits;
         }
 

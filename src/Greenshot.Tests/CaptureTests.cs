@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -77,7 +77,8 @@ namespace Greenshot.Tests
             var capture = await captureFlow.Execute();
             Assert.NotNull(capture);
             Assert.NotNull(capture.CaptureElements);
-            Assert.Equal(2, capture.CaptureElements.Count);
+            bool hasCursor = Dapplo.Windows.Icons.CursorHelper.TryGetCurrentCursor(out _, out _);
+            Assert.Equal(hasCursor ? 2 : 1, capture.CaptureElements.Count);
         }
 
         /// <summary>

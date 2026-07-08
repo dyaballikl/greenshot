@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -65,19 +65,20 @@ namespace Greenshot.Addon.LegacyEditor
         /// <returns>IImageEditor</returns>
         public IImageEditor CreateOrReuse(ISurface surface, ICaptureDetails captureDetails = null)
         {
-            ImageEditorForm editorToReturn;
-            if (_editorConfiguration.ReuseEditor)
+            ImageEditorForm editorToReturn = _editorList.FirstOrDefault();
+            if (editorToReturn != null)
             {
-                editorToReturn = _editorList.FirstOrDefault(e => !e.Surface.Modified);
-                if (editorToReturn != null)
+                editorToReturn.AddTab(surface, !surface.Modified);
+                if (!string.IsNullOrEmpty(captureDetails?.Filename))
                 {
-                    editorToReturn.Surface = surface;
-                    return editorToReturn;
+                    editorToReturn.SetImagePath(captureDetails.Filename);
                 }
+                editorToReturn.Activate();
+                return editorToReturn;
             }
 
             editorToReturn = _imageEditorFactory();
-            editorToReturn.Surface = surface;
+            editorToReturn.AddTab(surface, !surface.Modified);
             _editorList.Add(editorToReturn);
             if (!string.IsNullOrEmpty(captureDetails?.Filename))
             {

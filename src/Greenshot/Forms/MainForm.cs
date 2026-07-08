@@ -34,6 +34,8 @@ using Greenshot.Help;
 using Greenshot.Helpers;
 using Dapplo.Log;
 using Timer = System.Timers.Timer;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
+using ScreenCaptureMode = Greenshot.Core.Enums.ScreenCaptureMode;
 using Dapplo.Windows.Dpi;
 using Dapplo.Windows.App;
 using Dapplo.Windows.Clipboard;

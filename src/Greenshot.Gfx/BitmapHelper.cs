@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 //
 // For more information see: http://getgreenshot.org/
@@ -66,9 +66,12 @@ namespace Greenshot.Gfx
         /// <param name="formatReader">IImageFormatReader</param>
         public static void RegisterFormatReader<TFormatReader>(TFormatReader formatReader) where TFormatReader : IImageFormatReader
         {
-            foreach (var extension in formatReader.SupportedFormats)
+            lock (StreamConverters)
             {
-                StreamConverters[extension] = formatReader;
+                foreach (var extension in formatReader.SupportedFormats)
+                {
+                    StreamConverters[extension] = formatReader;
+                }
             }
         }
 

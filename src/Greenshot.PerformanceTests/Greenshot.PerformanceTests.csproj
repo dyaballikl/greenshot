@@ -4,7 +4,7 @@
     <RootNamespace>Greenshot.PerformanceTests</RootNamespace>
     <AssemblyName>Greenshot.PerformanceTests</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
@@ -20,6 +20,5 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
     <PackageReference Include="SharpAvi" Version="2.1.2" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 </Project>

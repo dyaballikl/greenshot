@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <Copyright>Copyright © Greenshot 2004-2026</Copyright>
     <Authors>Greenshot</Authors>
@@ -16,10 +16,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- disable all package warnings "This may cause compatibility problems." -->
-    <NoWarn>NU1701</NoWarn>
-    <!-- disable all documentation warnings -->
-    <NoWarn>CS1591</NoWarn>
+    <!-- disable all package, documentation, obsolete API, WinForms deprecation, and code analysis warnings -->
+    <NoWarn>$(NoWarn);NU1701;CS1591;SYSLIB0011;WFO1000;WFDEV004;SYSLIB0003;SYSLIB0021;SYSLIB0006;SYSLIB0050;CA2014;CA2022;CS0672;CS0618;CS0649;CS0414;WFO0003</NoWarn>
   </PropertyGroup>
   
   <!-- ILLinker and single file settings -->
@@ -63,6 +61,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference-->
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.11" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
   </ItemGroup>
 
   <Target Name="PostBuild" BeforeTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true' And $(MSBuildProjectName.Contains('Addon.')) And !$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">

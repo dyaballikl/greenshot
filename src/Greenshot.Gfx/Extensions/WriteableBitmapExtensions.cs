@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -19,6 +19,7 @@
 
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
 
 namespace Greenshot.Gfx.Extensions
@@ -34,19 +35,27 @@ namespace Greenshot.Gfx.Extensions
         /// <param name="target">WriteableBitmap</param>
         /// <param name="source">BitmapSource</param>
         /// <param name="rect">BitmapSource</param>
-        public static void CopyPixels(this WriteableBitmap target, BitmapSource source, NativeRect rect)
+        public static void CopyPixels(this WriteableBitmap target, BitmapSource source, NativeRect rect, NativeRect captureBounds)
         {
-            // Calculate stride of source
-            int stride = source.PixelWidth * (source.Format.BitsPerPixel / 8);
+            var intersection = rect.Intersect(captureBounds);
+            if (intersection.IsEmpty)
+            {
+                return;
+            }
 
-            // Create data array to hold source pixel data
-            byte[] data = new byte[stride * source.PixelHeight];
+            int relativeX = (int)(intersection.X - captureBounds.X);
+            int relativeY = (int)(intersection.Y - captureBounds.Y);
+            int width = (int)intersection.Width;
+            int height = (int)intersection.Height;
 
-            // Copy source image pixels to the data array
-            source.CopyPixels(data, stride, 0);
+            var sourceRect = new Int32Rect(relativeX, relativeY, width, height);
+            int bytesPerPixel = source.Format.BitsPerPixel / 8;
+            int subStride = width * bytesPerPixel;
 
-            // Write the pixel data to the WriteableBitmap.
-            target.WritePixels(new Int32Rect(0, 0, source.PixelWidth, source.PixelHeight), data, stride, 0);
+            byte[] data = new byte[subStride * height];
+            source.CopyPixels(sourceRect, data, subStride, 0);
+
+            target.WritePixels(new Int32Rect(0, 0, width, height), data, subStride, relativeX, relativeY);
         }
     }
 }

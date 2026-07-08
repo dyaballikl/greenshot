@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 //
 // For more information see: http://getgreenshot.org/
@@ -18,7 +18,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Runtime.InteropServices.WindowsRuntime;
+using WinRT;
 using Windows.ApplicationModel.DataTransfer;
 using Dapplo.Log;
 using Dapplo.Windows.Common.Extensions;
@@ -50,20 +50,19 @@ namespace Greenshot.Addon.Win10.Native
         /// <param name="handle"></param>
 		public DataTransferManagerHelper(IntPtr handle)
 		{
-			//TODO: Add a check for failure here. This will fail for versions of Windows below Windows 10
-			IActivationFactory activationFactory = WindowsRuntimeMarshal.GetActivationFactory(typeof(DataTransferManager));
-
-			// ReSharper disable once SuspiciousTypeConversion.Global
-			_dataTransferManagerInterOp = (IDataTransferManagerInterOp)activationFactory;
+			_dataTransferManagerInterOp = DataTransferManager.As<IDataTransferManagerInterOp>();
 
 			_windowHandle = handle;
 			var guid = new Guid(DataTransferManagerId);
-		    var hResult = _dataTransferManagerInterOp.GetForWindow(_windowHandle, guid, out var dataTransferManager);
-			if (hResult.Failed())
+			IntPtr resultPtr = _dataTransferManagerInterOp.GetForWindow(_windowHandle, ref guid);
+			if (resultPtr == IntPtr.Zero)
 			{
-				Log.Warn().WriteLine("HResult for GetForWindow: {0}", hResult);
+				Log.Warn().WriteLine("GetForWindow returned IntPtr.Zero");
 			}
-			DataTransferManager = dataTransferManager;
+			else
+			{
+				DataTransferManager = MarshalInterface<DataTransferManager>.FromAbi(resultPtr);
+			}
 		}
 
 		/// <summary>

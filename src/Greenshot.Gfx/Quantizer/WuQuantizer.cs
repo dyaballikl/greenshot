@@ -49,6 +49,7 @@ namespace Greenshot.Gfx.Quantizer
 		private readonly long[,,] _momentsGreen;
 		private readonly long[,,] _momentsRed;
 		private readonly UnmanagedBitmap<TPixel> _sourceBitmap;
+		private readonly UnmanagedBitmap<TPixel> _temporaryBitmap;
 
 		private readonly long[,,] _weights;
 		private ChunkyBitmap _resultBitmap;
@@ -57,9 +58,26 @@ namespace Greenshot.Gfx.Quantizer
         /// The constructor for the WuQauntizer
         /// </summary>
         /// <param name="sourceBitmap">IBitmapWithNativeSupport</param>
-        public WuQuantizer(IBitmapWithNativeSupport sourceBitmap) : this(sourceBitmap as UnmanagedBitmap<TPixel>)
+        public WuQuantizer(IBitmapWithNativeSupport sourceBitmap) : this(
+            sourceBitmap as UnmanagedBitmap<TPixel> != null 
+                ? (sourceBitmap as UnmanagedBitmap<TPixel>, (UnmanagedBitmap<TPixel>)null) 
+                : CreateTemporaryBitmap(sourceBitmap))
         {
+        }
 
+        private WuQuantizer((UnmanagedBitmap<TPixel> source, UnmanagedBitmap<TPixel> temp) tuple) : this(tuple.source)
+        {
+            _temporaryBitmap = tuple.temp;
+        }
+
+        private static (UnmanagedBitmap<TPixel> source, UnmanagedBitmap<TPixel> temp) CreateTemporaryBitmap(IBitmapWithNativeSupport sourceBitmap)
+        {
+            var unmanaged = new UnmanagedBitmap<TPixel>(sourceBitmap.Width, sourceBitmap.Height, sourceBitmap.HorizontalResolution, sourceBitmap.VerticalResolution);
+            using (var graphics = Graphics.FromImage(unmanaged.NativeBitmap))
+            {
+                graphics.DrawImage(sourceBitmap.NativeBitmap, 0, 0);
+            }
+            return (unmanaged, unmanaged);
         }
 
         /// <summary>
@@ -69,6 +87,7 @@ namespace Greenshot.Gfx.Quantizer
         public WuQuantizer(UnmanagedBitmap<TPixel> sourceBitmap)
 		{
 			_sourceBitmap = sourceBitmap;
+			_temporaryBitmap = null;
 			// Make sure the color count variables are reset
 			var bitArray = new BitArray((int) Math.Pow(2, 24));
 			_colorCount = 0;
@@ -151,6 +170,8 @@ namespace Greenshot.Gfx.Quantizer
 		    {
 		        return;
 		    }
+
+		    _temporaryBitmap?.Dispose();
 
 		    if (_resultBitmap == null)
 		    {

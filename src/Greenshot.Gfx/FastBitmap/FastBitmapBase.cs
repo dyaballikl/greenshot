@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -336,7 +336,7 @@ namespace Greenshot.Gfx.FastBitmap
         public uint HorizontalHash(int y, int? right = null, int? left = null)
         {
             var offset = (left ?? Left) * BytesPerPixel + y * Stride;
-            var length = (right ?? Right) - (left ?? Left) * BytesPerPixel;
+            var length = ((right ?? Right) - (left ?? Left)) * BytesPerPixel;
             var values = new ReadOnlySpan<byte>(Pointer + offset, length);
             return XXHash.Hash32(values, Seed);
         }

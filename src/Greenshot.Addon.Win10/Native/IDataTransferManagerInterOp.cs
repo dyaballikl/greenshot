@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2020 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: http://getgreenshot.org/
@@ -39,10 +39,9 @@ namespace Greenshot.Addon.Win10.Native
 		/// </summary>
 		/// <param name="appWindow">The window handle</param>
 		/// <param name="riid">ID of the DataTransferManager interface</param>
-		/// <param name="pDataTransferManager">The DataTransferManager instance for this window handle</param>
-		/// <returns>HRESULT</returns>
+		/// <returns>IntPtr pointer to the DataTransferManager instance</returns>
 		[PreserveSig]
-		HResult GetForWindow([In] IntPtr appWindow, [In] ref Guid riid, [Out] out DataTransferManager pDataTransferManager);
+		IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
 
 		/// <summary>
 		/// Show the share flyout for the window identified by a window handle
