@@ -1403,6 +1403,7 @@ namespace Greenshot.Editor.Forms
         private void RefreshFieldControls()
         {
             propertiesToolStrip.SuspendLayout();
+            bool hasVisibleItems = false;
             if (_surface.HasSelectedElements || _surface.DrawingMode != DrawingModes.None)
             {
                 var props = (FieldAggregator)_surface.FieldAggregator;
@@ -1430,12 +1431,22 @@ namespace Greenshot.Editor.Forms
                 obfuscateModeButton.Visible = props.HasFieldValue(FieldType.PREPARED_FILTER_OBFUSCATE);
                 cropModeButton.Visible = props.HasFieldValue(FieldType.CROPMODE);
                 highlightModeButton.Visible = props.HasFieldValue(FieldType.PREPARED_FILTER_HIGHLIGHT);
+
+                foreach (ToolStripItem item in propertiesToolStrip.Items)
+                {
+                    if (item.Visible)
+                    {
+                        hasVisibleItems = true;
+                        break;
+                    }
+                }
             }
             else
             {
                 HideToolstripItems();
             }
 
+            propertiesToolStrip.Visible = hasVisibleItems;
             propertiesToolStrip.ResumeLayout();
         }
 
@@ -1445,6 +1456,7 @@ namespace Greenshot.Editor.Forms
             {
                 toolStripItem.Visible = false;
             }
+            propertiesToolStrip.Visible = false;
         }
 
         /// <summary>
