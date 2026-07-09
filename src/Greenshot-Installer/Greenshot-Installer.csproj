@@ -4,7 +4,7 @@
     <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
   </PropertyGroup>
   
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="Tools.InnoSetup" Version="6.7.1" />
   </ItemGroup>
   
