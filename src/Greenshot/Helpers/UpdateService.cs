@@ -1,4 +1,4 @@
-﻿// Greenshot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
 //
 // For more information see: https://getgreenshot.org/
@@ -89,7 +89,7 @@ namespace Greenshot.Helpers
         /// </summary>
         public void Startup()
         {
-            _ = BackgroundTask(() => TimeSpan.FromDays(CoreConfig.UpdateCheckInterval), UpdateCheck, _cancellationTokenSource.Token);
+            // Update checks have been completely disabled/removed.
         }
 
         /// <summary>
