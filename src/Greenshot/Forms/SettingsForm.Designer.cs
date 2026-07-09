@@ -84,8 +84,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol = new System.Windows.Forms.TabControl();
 			this.tab_general = new GreenshotTabPage();
 			this.groupbox_network = new GreenshotGroupBox();
-			this.numericUpDown_daysbetweencheck = new System.Windows.Forms.NumericUpDown();
-			this.label_checkperiod = new GreenshotLabel();
 			this.checkbox_usedefaultproxy = new GreenshotCheckBox();
 			this.groupbox_hotkeys = new GreenshotGroupBox();
 			this.label_lastregion_hotkey = new GreenshotLabel();
@@ -134,7 +132,6 @@ namespace Greenshot.Forms {
 			this.tab_expert = new GreenshotTabPage();
 			this.groupbox_expert = new GreenshotGroupBox();
 			this.checkbox_minimizememoryfootprint = new GreenshotCheckBox();
-			this.checkbox_checkunstableupdates = new GreenshotCheckBox();
 			this.checkbox_suppresssavedialogatclose = new GreenshotCheckBox();
 			this.label_counter = new GreenshotLabel();
 			this.textbox_counter = new GreenshotTextBox();
@@ -155,7 +152,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol.SuspendLayout();
 			this.tab_general.SuspendLayout();
 			this.groupbox_network.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown_daysbetweencheck)).BeginInit();
 			this.groupbox_hotkeys.SuspendLayout();
 			this.tab_capture.SuspendLayout();
 			this.groupbox_editor.SuspendLayout();
@@ -489,33 +485,13 @@ namespace Greenshot.Forms {
 			// 
 			// groupbox_network
 			// 
-			this.groupbox_network.Controls.Add(this.numericUpDown_daysbetweencheck);
-			this.groupbox_network.Controls.Add(this.label_checkperiod);
 			this.groupbox_network.Controls.Add(this.checkbox_usedefaultproxy);
 			this.groupbox_network.LanguageKey = "settings_network";
 			this.groupbox_network.Location = new System.Drawing.Point(3, 253);
 			this.groupbox_network.Name = "groupbox_network";
-			this.groupbox_network.Size = new System.Drawing.Size(412, 72);
+			this.groupbox_network.Size = new System.Drawing.Size(412, 42);
 			this.groupbox_network.TabIndex = 54;
 			this.groupbox_network.TabStop = false;
-			// 
-			// numericUpDown_daysbetweencheck
-			// 
-			this.numericUpDown_daysbetweencheck.Location = new System.Drawing.Point(359, 37);
-			this.numericUpDown_daysbetweencheck.Name = "numericUpDown_daysbetweencheck";
-			this.numericUpDown_daysbetweencheck.Size = new System.Drawing.Size(44, 20);
-			this.numericUpDown_daysbetweencheck.TabIndex = 8;
-			this.numericUpDown_daysbetweencheck.ThousandsSeparator = true;
-			this.numericUpDown_daysbetweencheck.Minimum = 0;
-			this.numericUpDown_daysbetweencheck.Maximum = 365;
-			//
-			// label_checkperiod
-			//
-			this.label_checkperiod.LanguageKey = "settings_checkperiod";
-			this.label_checkperiod.Location = new System.Drawing.Point(5, 39);
-			this.label_checkperiod.Name = "label_checkperiod";
-			this.label_checkperiod.Size = new System.Drawing.Size(350, 23);
-			this.label_checkperiod.TabIndex = 19;
 			// 
 			// checkbox_usedefaultproxy
 			// 
@@ -1042,7 +1018,6 @@ namespace Greenshot.Forms {
 			// groupbox_expert
 			// 
 			this.groupbox_expert.Controls.Add(this.checkbox_minimizememoryfootprint);
-			this.groupbox_expert.Controls.Add(this.checkbox_checkunstableupdates);
 			this.groupbox_expert.Controls.Add(this.checkbox_suppresssavedialogatclose);
 			this.groupbox_expert.Controls.Add(this.label_counter);
 			this.groupbox_expert.Controls.Add(this.textbox_counter);
@@ -1064,22 +1039,12 @@ namespace Greenshot.Forms {
 			// checkbox_minimizememoryfootprint
 			//
 			this.checkbox_minimizememoryfootprint.LanguageKey = "expertsettings_minimizememoryfootprint";
-			this.checkbox_minimizememoryfootprint.Location = new System.Drawing.Point(10, 202);
+			this.checkbox_minimizememoryfootprint.Location = new System.Drawing.Point(10, 184);
 			this.checkbox_minimizememoryfootprint.Name = "checkbox_minimizememoryfootprint";
 			this.checkbox_minimizememoryfootprint.PropertyName = nameof(coreConfiguration.MinimizeWorkingSetSize);
 			this.checkbox_minimizememoryfootprint.Size = new System.Drawing.Size(394, 20);
 			this.checkbox_minimizememoryfootprint.TabIndex = 8;
 			this.checkbox_minimizememoryfootprint.UseVisualStyleBackColor = true;
-			// 
-			// checkbox_checkunstableupdates
-			//
-			this.checkbox_checkunstableupdates.LanguageKey = "expertsettings_checkunstableupdates";
-			this.checkbox_checkunstableupdates.Location = new System.Drawing.Point(10, 184);
-			this.checkbox_checkunstableupdates.Name = "checkbox_checkunstableupdates";
-			this.checkbox_checkunstableupdates.PropertyName = nameof(coreConfiguration.CheckForUnstable);
-			this.checkbox_checkunstableupdates.Size = new System.Drawing.Size(394, 20);
-			this.checkbox_checkunstableupdates.TabIndex = 7;
-			this.checkbox_checkunstableupdates.UseVisualStyleBackColor = true;
 			// 
 			// checkbox_suppresssavedialogatclose
 			//
@@ -1220,7 +1185,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol.ResumeLayout(false);
 			this.tab_general.ResumeLayout(false);
 			this.groupbox_network.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown_daysbetweencheck)).EndInit();
 			this.groupbox_hotkeys.ResumeLayout(false);
 			this.groupbox_hotkeys.PerformLayout();
 			this.tab_capture.ResumeLayout(false);
@@ -1253,10 +1217,8 @@ namespace Greenshot.Forms {
 		private System.Windows.Forms.ListView listview_destinations;
 		private GreenshotGroupBox groupbox_editor;
 		private GreenshotCheckBox checkbox_editor_match_capture_size;
-		private System.Windows.Forms.NumericUpDown numericUpDown_daysbetweencheck;
 		private GreenshotGroupBox groupbox_network;
 		private GreenshotCheckBox checkbox_usedefaultproxy;
-		private GreenshotLabel label_checkperiod;
 		private HotkeyControl fullscreen_hotkeyControl;
 		private HotkeyControl window_hotkeyControl;
 		private HotkeyControl region_hotkeyControl;
@@ -1324,7 +1286,6 @@ namespace Greenshot.Forms {
 		private GreenshotTextBox textbox_counter;
 		private GreenshotCheckBox checkbox_reducecolors;
 		private GreenshotCheckBox checkbox_suppresssavedialogatclose;
-		private GreenshotCheckBox checkbox_checkunstableupdates;
         private GreenshotCheckBox checkbox_alwaysshowprintoptionsdialog;
         private GreenshotGroupBox groupBoxColors;
         private GreenshotCheckBox checkboxPrintInverted;

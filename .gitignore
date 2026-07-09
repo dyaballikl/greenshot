@@ -227,3 +227,11 @@ src/generated/
 # Token-replacement generated credential files
 src/**/*.Credentials.cs
 /bom.json
+
+# Allow specifically the net480 output folder and its contents
+!src/Greenshot/bin/
+src/Greenshot/bin/*
+!src/Greenshot/bin/Debug/
+src/Greenshot/bin/Debug/*
+!src/Greenshot/bin/Debug/net480/
+
