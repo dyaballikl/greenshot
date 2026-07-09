@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
  * 
@@ -93,15 +93,32 @@ namespace Greenshot.Editor.Destinations
             bool modified = surface.Modified;
             if (editor == null)
             {
-                if (editorConfiguration.ReuseEditor)
+                ImageEditorForm editorToReturn = null;
+                foreach (IImageEditor openedEditor in ImageEditorForm.Editors)
                 {
-                    foreach (IImageEditor openedEditor in ImageEditorForm.Editors)
+                    if (openedEditor is ImageEditorForm form)
                     {
-                        if (openedEditor.Surface.Modified) continue;
-
-                        openedEditor.Surface = surface;
-                        exportInformation.ExportMade = true;
+                        editorToReturn = form;
                         break;
+                    }
+                }
+
+                if (editorToReturn != null)
+                {
+                    try
+                    {
+                        editorToReturn.AddTab(surface, !surface.Modified);
+                        if (captureDetails != null && !string.IsNullOrEmpty(captureDetails.Filename))
+                        {
+                            editorToReturn.SetImagePath(captureDetails.Filename);
+                        }
+                        editorToReturn.Activate();
+                        exportInformation.ExportMade = true;
+                    }
+                    catch (Exception e)
+                    {
+                        LOG.Error(e);
+                        exportInformation.ErrorMessage = e.Message;
                     }
                 }
 
@@ -111,7 +128,7 @@ namespace Greenshot.Editor.Destinations
                     {
                         ImageEditorForm editorForm = new ImageEditorForm(surface, !surface.Modified); // Output made??
 
-                        if (!string.IsNullOrEmpty(captureDetails.Filename))
+                        if (captureDetails != null && !string.IsNullOrEmpty(captureDetails.Filename))
                         {
                             editorForm.SetImagePath(captureDetails.Filename);
                         }
