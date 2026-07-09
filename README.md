@@ -1,4 +1,4 @@
-<img width="1246" height="559" alt="image" src="https://github.com/user-attachments/assets/8adb9234-a2fa-4787-85bf-fac3aa26b402" />Greenshot - a free screenshot tool optimized for productivity
+Greenshot - a free screenshot tool optimized for productivity
 =============================================================
 
 ******************
