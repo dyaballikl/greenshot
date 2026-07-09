@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
  * 
@@ -133,7 +133,6 @@ namespace Greenshot.Forms {
 			this.button_pluginconfigure = new GreenshotButton();
 			this.tab_expert = new GreenshotTabPage();
 			this.groupbox_expert = new GreenshotGroupBox();
-			this.checkbox_reuseeditor = new GreenshotCheckBox();
 			this.checkbox_minimizememoryfootprint = new GreenshotCheckBox();
 			this.checkbox_checkunstableupdates = new GreenshotCheckBox();
 			this.checkbox_suppresssavedialogatclose = new GreenshotCheckBox();
@@ -1042,7 +1041,6 @@ namespace Greenshot.Forms {
 			// 
 			// groupbox_expert
 			// 
-			this.groupbox_expert.Controls.Add(this.checkbox_reuseeditor);
 			this.groupbox_expert.Controls.Add(this.checkbox_minimizememoryfootprint);
 			this.groupbox_expert.Controls.Add(this.checkbox_checkunstableupdates);
 			this.groupbox_expert.Controls.Add(this.checkbox_suppresssavedialogatclose);
@@ -1063,18 +1061,6 @@ namespace Greenshot.Forms {
 			this.groupbox_expert.TabIndex = 17;
 			this.groupbox_expert.TabStop = false;
 			this.groupbox_expert.Text = "Expert";
-			// 
-			// checkbox_reuseeditor
-			//
-			this.checkbox_reuseeditor.LanguageKey = "expertsettings_reuseeditorifpossible";
-			this.checkbox_reuseeditor.Location = new System.Drawing.Point(10, 220);
-			this.checkbox_reuseeditor.Name = "checkbox_reuseeditor";
-			this.checkbox_reuseeditor.PropertyName = nameof(IEditorConfiguration.ReuseEditor);
-			this.checkbox_reuseeditor.SectionName = "Editor";
-			this.checkbox_reuseeditor.Size = new System.Drawing.Size(394, 20);
-			this.checkbox_reuseeditor.TabIndex = 9;
-			this.checkbox_reuseeditor.UseVisualStyleBackColor = true;
-			// 
 			// checkbox_minimizememoryfootprint
 			//
 			this.checkbox_minimizememoryfootprint.LanguageKey = "expertsettings_minimizememoryfootprint";
@@ -1109,14 +1095,14 @@ namespace Greenshot.Forms {
 			// label_counter
 			//
 			this.label_counter.LanguageKey = "expertsettings_counter";
-			this.label_counter.Location = new System.Drawing.Point(7, 270);
+			this.label_counter.Location = new System.Drawing.Point(7, 252);
 			this.label_counter.Name = "label_counter";
 			this.label_counter.Size = new System.Drawing.Size(246, 20);
 			this.label_counter.TabIndex = 27;
 			//
 			// textbox_counter
 			//
-			this.textbox_counter.Location = new System.Drawing.Point(259, 267);
+			this.textbox_counter.Location = new System.Drawing.Point(259, 249);
 			this.textbox_counter.Name = "textbox_counter";
 			this.textbox_counter.PropertyName = nameof(coreConfiguration.OutputFileIncrementingNumber);
 			this.textbox_counter.Size = new System.Drawing.Size(141, 20);
@@ -1125,7 +1111,7 @@ namespace Greenshot.Forms {
 			// label_footerpattern
 			//
 			this.label_footerpattern.LanguageKey = "expertsettings_footerpattern";
-			this.label_footerpattern.Location = new System.Drawing.Point(7, 244);
+			this.label_footerpattern.Location = new System.Drawing.Point(7, 226);
 			this.label_footerpattern.Name = "label_footerpattern";
 			this.label_footerpattern.Size = new System.Drawing.Size(130, 20);
 			this.label_footerpattern.TabIndex = 25;
@@ -1133,7 +1119,7 @@ namespace Greenshot.Forms {
 			//
 			// textbox_footerpattern
 			//
-			this.textbox_footerpattern.Location = new System.Drawing.Point(138, 241);
+			this.textbox_footerpattern.Location = new System.Drawing.Point(138, 223);
 			this.textbox_footerpattern.Name = "textbox_footerpattern";
 			this.textbox_footerpattern.PropertyName = nameof(coreConfiguration.OutputPrintFooterPattern);
 			this.textbox_footerpattern.Size = new System.Drawing.Size(262, 20);
@@ -1339,7 +1325,6 @@ namespace Greenshot.Forms {
 		private GreenshotCheckBox checkbox_reducecolors;
 		private GreenshotCheckBox checkbox_suppresssavedialogatclose;
 		private GreenshotCheckBox checkbox_checkunstableupdates;
-        private GreenshotCheckBox checkbox_reuseeditor;
         private GreenshotCheckBox checkbox_alwaysshowprintoptionsdialog;
         private GreenshotGroupBox groupBoxColors;
         private GreenshotCheckBox checkboxPrintInverted;

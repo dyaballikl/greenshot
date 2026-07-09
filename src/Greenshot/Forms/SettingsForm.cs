@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Greenshot - a free and open source screenshot tool
  * Copyright � 2004-2026  Thomas Braun, Jens Klingen, Robin Krom
  *
@@ -857,7 +857,7 @@ namespace Greenshot.Forms
             checkbox_suppresssavedialogatclose.Enabled = state;
             checkbox_checkunstableupdates.Enabled = state;
             checkbox_minimizememoryfootprint.Enabled = state;
-            checkbox_reuseeditor.Enabled = state;
+
         }
 
         /// <summary>

@@ -70,9 +70,6 @@ namespace Greenshot.Editor.Configuration
         [DefaultValue("100,100,400,400")]
         NativeRect WindowNormalPosition { get; set; }
 
-        [Description("Reuse already open editor")]
-        [DefaultValue(false)]
-        bool ReuseEditor { get; set; }
 
         [Description("The smaller this number, the less smoothing is used. Decrease for detailed drawing, e.g. when using a pen. Increase for smoother lines. e.g. when you want to draw a smooth line. Minimal value is 1, max is 100.")]
         [DefaultValue(3)]
