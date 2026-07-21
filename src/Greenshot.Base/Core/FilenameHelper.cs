@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
  * 
@@ -111,7 +111,16 @@ namespace Greenshot.Base.Core
 
         public static string GetFilenameWithoutExtensionFromPattern(string pattern, ICaptureDetails captureDetails)
         {
-            return FillPattern(pattern, captureDetails, true);
+            string filename = FillPattern(pattern, captureDetails, true);
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                filename = FillPattern("screenshot_${capturetime:d\"yyyyMMdd_HHmmss\"}", captureDetails, true);
+                if (string.IsNullOrWhiteSpace(filename))
+                {
+                    filename = "greenshot";
+                }
+            }
+            return filename;
         }
 
         public static string GetFilenameFromPattern(string pattern, OutputFormat imageFormat)
@@ -121,7 +130,16 @@ namespace Greenshot.Base.Core
 
         public static string GetFilenameFromPattern(string pattern, OutputFormat imageFormat, ICaptureDetails captureDetails)
         {
-            return FillPattern(pattern, captureDetails, true) + "." + imageFormat.ToString().ToLower();
+            string filename = FillPattern(pattern, captureDetails, true);
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                filename = FillPattern("screenshot_${capturetime:d\"yyyyMMdd_HHmmss\"}", captureDetails, true);
+                if (string.IsNullOrWhiteSpace(filename))
+                {
+                    filename = "greenshot";
+                }
+            }
+            return filename + "." + imageFormat.ToString().ToLower();
         }
 
         /// <summary>
@@ -136,7 +154,7 @@ namespace Greenshot.Base.Core
             string pattern = CoreConfig.OutputFileFilenamePattern;
             if (string.IsNullOrEmpty(pattern?.Trim()))
             {
-                pattern = "greenshot ${capturetime}";
+                pattern = "screenshot_${capturetime:d\"yyyyMMdd_HHmmss\"}";
             }
 
             return GetFilenameFromPattern(pattern, format, captureDetails);

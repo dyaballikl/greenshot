@@ -209,11 +209,24 @@ namespace Greenshot.Base.Controls
         private void ApplySuggestedValues()
         {
             string expanded = FilenameHelper.GetFilenameWithoutExtensionFromPattern(conf.OutputFileFilenamePattern, _captureDetails);
+            if (string.IsNullOrWhiteSpace(expanded))
+            {
+                expanded = "greenshot";
+            }
 
-            // Pattern may expand to a relative subpath (e.g. "2026-03-02\000002 - title").
-            // Split into directory and filename parts so the dialog navigates to the right folder.
-            string subDir = Path.GetDirectoryName(expanded);
-            string fileName = Path.GetFileName(expanded);
+            string subDir = null;
+            string fileName = expanded;
+            try
+            {
+                subDir = Path.GetDirectoryName(expanded);
+                fileName = Path.GetFileName(expanded);
+            }
+            catch (Exception ex)
+            {
+                LOG.WarnFormat("Could not parse directory/filename from: {0}. Error: {1}", expanded, ex.Message);
+                subDir = null;
+                fileName = "greenshot";
+            }
 
             if (!string.IsNullOrEmpty(subDir))
             {

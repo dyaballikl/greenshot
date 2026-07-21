@@ -1434,7 +1434,7 @@ namespace Greenshot.Editor.Forms
 
                 foreach (ToolStripItem item in propertiesToolStrip.Items)
                 {
-                    if (item.Visible)
+                    if (item.Available)
                     {
                         hasVisibleItems = true;
                         break;
@@ -1448,6 +1448,10 @@ namespace Greenshot.Editor.Forms
 
             propertiesToolStrip.Visible = hasVisibleItems;
             propertiesToolStrip.ResumeLayout();
+            if (propertiesToolStrip.Parent is ToolStripPanel panel)
+            {
+                panel.PerformLayout();
+            }
         }
 
         private void HideToolstripItems()
@@ -1457,6 +1461,10 @@ namespace Greenshot.Editor.Forms
                 toolStripItem.Visible = false;
             }
             propertiesToolStrip.Visible = false;
+            if (propertiesToolStrip.Parent is ToolStripPanel panel)
+            {
+                panel.PerformLayout();
+            }
         }
 
         /// <summary>

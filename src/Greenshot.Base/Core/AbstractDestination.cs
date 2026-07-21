@@ -184,6 +184,22 @@ namespace Greenshot.Base.Core
                 Font = new Font(FontFamily.GenericSansSerif, 9) // set new default font, so we are allowed to dispose it later, we will scale it later on the Opening event
             };
 
+            bool escPressed = false;
+            menu.PreviewKeyDown += (sender, args) =>
+            {
+                if (args.KeyCode == Keys.Escape)
+                {
+                    escPressed = true;
+                }
+            };
+            menu.KeyDown += (sender, args) =>
+            {
+                if (args.KeyCode == Keys.Escape)
+                {
+                    escPressed = true;
+                }
+            };
+
             menu.Opening += (sender, args) =>
             {
                 // find the DPI settings for the screen where this is going to land
@@ -224,20 +240,27 @@ namespace Greenshot.Base.Core
                         // The ContextMenuStrip can be "closed" for these reasons.
                         break;
                     case ToolStripDropDownCloseReason.Keyboard:
-                        // Menu closed via keyboard (e.g., ESC key)
-                        if (!captureDetails.HasDestination("Editor") && surface != null)
+                        if (escPressed)
                         {
-                            surface.Dispose();
-                            surface = null;
-                        }
-                        // We might already be in the disposing process, so queue the disposal to avoid re-entrancy
-                        menu.BeginInvoke(new Action(() =>
-                        {
-                            if (!menu.IsDisposed)
+                            // Menu closed via keyboard (e.g., ESC key)
+                            if (!captureDetails.HasDestination("Editor") && surface != null)
                             {
-                                menu.Dispose();
+                                surface.Dispose();
+                                surface = null;
                             }
-                        }));
+                            // We might already be in the disposing process, so queue the disposal to avoid re-entrancy
+                            menu.BeginInvoke(new Action(() =>
+                            {
+                                if (!menu.IsDisposed)
+                                {
+                                    menu.Dispose();
+                                }
+                            }));
+                        }
+                        else
+                        {
+                            eventArgs.Cancel = true;
+                        }
                         break;
                     default:
                         eventArgs.Cancel = true;

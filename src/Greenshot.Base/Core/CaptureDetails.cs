@@ -39,7 +39,7 @@ namespace Greenshot.Base.Core
         public string Filename { get; set; }
 
         /// <inheritdoc />
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
         /// <inheritdoc />
         public float DpiX { get; set; }

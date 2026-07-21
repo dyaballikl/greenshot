@@ -173,7 +173,11 @@ namespace Greenshot.Helpers
                     _dispatcher.Invoke(() => {
                         ISurface surface = new Surface();
                         surface = ImageIO.LoadGreenshotSurface(filePath, surface);
-                        surface.CaptureDetails = new CaptureDetails();
+                        surface.CaptureDetails = new CaptureDetails
+                        {
+                            Title = "Restored Capture",
+                            DateTime = File.Exists(filePath) ? File.GetLastWriteTime(filePath) : DateTime.Now
+                        };
                         try
                         {
                             DestinationHelper.GetDestination(EditorDestination.DESIGNATION).ExportCapture(true, surface, surface.CaptureDetails);

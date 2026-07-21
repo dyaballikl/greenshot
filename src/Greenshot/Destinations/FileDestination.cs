@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
  * 
@@ -132,7 +132,7 @@ namespace Greenshot.Destinations
             string pattern = CoreConfig.OutputFileFilenamePattern;
             if (string.IsNullOrEmpty(pattern))
             {
-                pattern = "greenshot ${capturetime}";
+                pattern = "screenshot_${capturetime:d\"yyyyMMdd_HHmmss\"}";
             }
 
             string filename = FilenameHelper.GetFilenameFromPattern(pattern, CoreConfig.OutputFileFormat, captureDetails);

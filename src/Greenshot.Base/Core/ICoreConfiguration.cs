@@ -124,7 +124,7 @@ namespace Greenshot.Base.Core
         bool OutputFileAllowOverwrite { get; set; }
 
         [Description("Filename pattern for screenshot.")]
-        [DefaultValue("${capturetime:d\"yyyy-MM-dd HH_mm_ss\"}-${title}")]
+        [DefaultValue("screenshot_${capturetime:d\"yyyyMMdd_HHmmss\"}")]
         string OutputFileFilenamePattern { get; set; }
 
         [Description("Default file type for writing screenshots. (bmp, gif, jpg, png, tiff)")]
